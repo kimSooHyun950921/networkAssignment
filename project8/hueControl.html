@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<style type = "text/css">
+  body{
+    text-align: center
+
+  }
+  h1{
+    margin:auto
+  }
+  .container {
+    display: flex;
+    margin : 100px;
+  }
+  .hue_1{
+    flex:1;
+  }
+  .hue_2{
+    flex:1;
+    margin : auto;
+  }
+  .hue_3{
+    flex:1;
+    margin : auto
+  }
+
+</style>
+<html>
+<head>
+  <title> hue Controll Page </title>
+</head>
+  <body>
+    <h1> hue Controll Page</h1>
+    <div class ="container">
+      <div class ="hue_1">
+        <p>Hue 1 Controller</p>
+        <div class = "centered">
+          <form action = 'hueControl.html' method="get">
+            Power : <input type ="radio" name="hue_1_power", value="on">On
+                    <input type ="radio" name="hue_1_power", value="off">off<br>
+            Brightness:0 <input type="range"min = "0" max = "254" id="hue_1_brightness" name="hue_1_brightness"> 254<br>
+            X : 0 <input type = "number" name = "hue_1_X" step="0.1"> 1<br>
+            Y : 0 <input type = "number" name="hue_1_Y" step="0.1"> 1<br><br>
+            <input type = "submit">
+
+          </form>
+        </div>
+      </div>
+
+      <div class ="hue_2">
+        <div class = "centered">
+          <p>Hue 2 Controller</p>
+
+          <form  action = 'hueControl.html' method="get">
+            Power : <input type ="radio" name="hue_2_power", value="on">On
+                    <input type ="radio" name="hue_2_power", value="off">off<br>
+            Brightness:0 <input type="range" min = "0" max = "254" id="hue_2_brightness" name="hue_2_brightness" > 254<br>
+            X : 0 <input type = "number" name = "hue_2_X" step ="0.01"> 1<br>
+            Y : 0 <input type = "number" name="hue_2_Y" step = "0.01"> 1<br><br>
+
+            <input type = "submit">
+
+          </form>
+        </div>
+      </div>
+
+      <div class ="hue_3">
+        <p>Hue 3 Controller</p>
+
+        <div class = "centered">
+          <form  action = 'hueControl.html' method="get">
+            Power : <input type ="radio" name="hue_3_power", value="on">On
+                    <input type ="radio" name="hue_3_power", value="off">off<br>
+            Brightness:0 <input type="range" min = "0" max = "254" id="hue_3_brightness" name="hue_3_brightness"> 254<br>
+            X : 0 <input type = "number" name = "hue_3_X" step ="0.01"> 1<br>
+            Y : 0 <input type = "number" name="hue_3_Y" step ="0.01"> 1<br><br>
+
+            <input type = "submit">
+
+          </form>
+        </div>
+      </div>
+  </div>
+
+
+</head>
+</html>

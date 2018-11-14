@@ -1,0 +1,8 @@
+dataCommunication/
+*/*.zip
+*/*.pdf
+*/*.docx
+*/*.odt
+*/*.log
+*/*.mp4
+__pycache__/
