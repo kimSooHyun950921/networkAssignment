@@ -28,7 +28,6 @@ class IRC_chat:
                 text = self.__socket.recv(4096)
 
                 text = text.decode()
-                self.DEBUG_MODE("check text -1"+text)
 
                 check = self.check_infinite_loop(text)
                 if check:
@@ -40,25 +39,19 @@ class IRC_chat:
 
     def preprocess_text(self,text):
         text = text.replace('\r\n','')
-        self.DEBUG_MODE(str(text))
         text = text.split(" ")
-        self.DEBUG_MODE(str(text))
         new_text = text[3:]
-        self.DEBUG_MODE(str(new_text))
         return new_text
 
 
     def check_infinite_loop(self,text):
-        self.DEBUG_MODE("Inthe check loop"+str(self.__error_count)+" len(Text):"+str(len(text)))
         if self.__error_count >=10:
-            self.DEBUG_MODE(str("error count over 4"+str(text)))
             self.__socket.close()
             self.__socket = self.__server_connect()
             self.__error_count = 0
             return False
         if len(text) == 0:
             self.__error_count +=1
-            self.DEBUG_MODE(str("error loop "+text+str(self.__error_count)))
             return False
 
         else:
@@ -67,29 +60,24 @@ class IRC_chat:
 
     def __controll_hue(self,text):
         new_text = self.preprocess_text(text)
-        self.DEBUG_MODE(str("recv_data debug-"+str(new_text)))
         if new_text[0] == ":hue":
             self.get_hue_command(new_text)
 
     def get_hue_command(self,text):
         hue_num = text[1]
-        hue_control_args = text[2]
-        hue_control =text[3]
-        self.DEBUG_MODE(str("controll_hue debug - "+hue_num+" "+hue_control_args+" "+hue_control))
-        self.__check_which_hue_control(hue_num,hue_control_args,hue_control)
-
-    def __check_which_hue_control(self,hue_num,args,control):
-        self.DEBUG_MODE(str("controll_hue debug - "+hue_num+" "+args+" "+control))
+        args = text[2]
 
         if args == 'set':
-            self.__hue.power_controll(hue_num,control)
+            self.__hue.power_controll(hue_num,text[3])
         if args == 'brightness':
-            self.__hue.brightness_controll(hue_num,control)
+            self.__hue.brightness_controll(hue_num,text[3])
         if args == 'color' :
-            self.__hue.color_controll(hue_num,control)
+            self.__hue.color_controll(hue_num,text[3],text[4])
 
     def main(self):
         self.__recv_data()
+        self.__socket.close()
+
 
 if __name__ == '__main__':
     chat = IRC_chat()

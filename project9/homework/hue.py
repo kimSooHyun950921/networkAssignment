@@ -15,6 +15,8 @@ class hue:
                 self.lights[int(bulb_num)-1].on = False
         except Exception as e:
             print("error a occur with ",e)
+    def is_power_on(self):
+        return (self.lights[0].on and self.lights[1].on and self.lights[2].on)
 
     def brightness_controll(self,bulb_num,brightness):
         try:
