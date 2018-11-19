@@ -1,39 +1,85 @@
-import socket import *
+from socket import *
 from  hue import hue
 
 
 class IRC_chat:
     def __init__(self):
-        self.portNumber = 6667
-        self.servername = "chat.freenode.net"
-        self.server_connect(servername,portNumber)
+        self.__hue = hue()
+        self.__portNumber = 6667
+        self.__servername = "chat.freenode.net"
+        self.__socket = self.__server_connect()
+        self.__error_count = 0
 
-    def server_connect(self,servername,portNumber):
+    def __server_connect(self):
         sock = socket(AF_INET,SOCK_STREAM)
-        sock.connect((servername,portNubmer))
+        sock.connect((self.__servername,self.__portNumber))
         sock.send("NICK U201402329\r\n".encode())
-        sock.send("USER 201402329 U201402329 U201402329: cnu bot\r\n".encode())
+        sock.send("USER U201402329 U201402329 U201402329: cnu bot\r\n".encode())
         sock.send("JOIN #CNU\r\n".encode())
+        return sock
 
-    def recv_data(self):
+    def DEBUG_MODE(self,msg,debug=True,):
+        if debug:
+            print(msg)
+
+    def __recv_data(self):
         while 1:
-            text = sock.recv(4096)
-            text = text.decode()
-            print(text)
-            if text[0:2] =="hue":
-                self.controll_hue(text)
+            try:
+                text = self.__socket.recv(4096)
+
+                text = text.decode()
+
+                check = self.check_infinite_loop(text)
+                if check:
+                    self.__controll_hue(text)
+                else:
+                    continue
+            except Exception as e:
+               self.DEBUG_MODE(str('error occur cause'+str(e)))
+
+    def preprocess_text(self,text):
+        text = text.replace('\r\n','')
+        text = text.split(" ")
+        new_text = text[3:]
+        return new_text
 
 
-    def controll_hue(self,text):
-        split_text = hue.split(" ")
-        hue_num = split_text[1]
-        hue_controll_args = split_text[2]
-        self.check_which_hue_controll(hue_num,split_text[3])
+    def check_infinite_loop(self,text):
+        if self.__error_count >=10:
+            self.__socket.close()
+            self.__socket = self.__server_connect()
+            self.__error_count = 0
+            return False
+        if len(text) == 0:
+            self.__error_count +=1
+            return False
 
-    def check_which_hue_control(self,hue_num,args):
-        if hue_controll_args is 'set':
-            hue.power_controll(hue_num,args)
-        if hue_controll_args is 'brightness':
-            hue.brightness_controll(hue_num,args)
-        if hue_controll_args is 'color' :
-            hue.color_controll(hue_num,args)
+        else:
+            return True
+
+
+    def __controll_hue(self,text):
+        print(text)
+        new_text = self.preprocess_text(text)
+        if new_text[0] == ":hue":
+            self.get_hue_command(new_text)
+
+    def get_hue_command(self,text):
+        hue_num = text[1]
+        args = text[2]
+
+        if args == 'set':
+            self.__hue.power_controll(hue_num,text[3])
+        if args == 'brightness':
+            self.__hue.brightness_controll(hue_num,text[3])
+        if args == 'color' :
+            self.__hue.color_controll(hue_num,text[3],text[4])
+
+    def main(self):
+        self.__recv_data()
+        self.__socket.close()
+
+
+if __name__ == '__main__':
+    chat = IRC_chat()
+    chat.main()
