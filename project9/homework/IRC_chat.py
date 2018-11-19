@@ -35,7 +35,6 @@ class IRC_chat:
                 else:
                     continue
             except Exception as e:
-               self.DEBUG_MODE(str('error occur cause'+str(e)))
 
     def preprocess_text(self,text):
         text = text.replace('\r\n','')
@@ -59,7 +58,10 @@ class IRC_chat:
 
 
     def __controll_hue(self,text):
+<<<<<<< HEAD
         print(text)
+=======
+>>>>>>> 8f6bedefe6d9d4a7c46e6182d9537f3f1756c2fd
         new_text = self.preprocess_text(text)
         if new_text[0] == ":hue":
             self.get_hue_command(new_text)
