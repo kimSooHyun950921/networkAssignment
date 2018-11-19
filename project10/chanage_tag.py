@@ -7,9 +7,13 @@ import subprocess
 
 
 def RTMP():
-    file_name = currentTime(True)+"_EBS.mp3"
-    subprocess.run(["rtmpdump","-r","rtmp://new_iradio.ebs.co.kr/iradio/iradiolive_m4a",
+    file_name = currentTime(True)+"_EBS.flv"
+    subprocess.run(["rtmpdump","-r",
+    "rtmp://new_iradio.ebs.co.kr/iradio/iradiolive_m4a",
     "-B","60","-o",file_name])
+    subprocess.run()
+
+
 
 def currentTime(is_only_month):
     today_time = datetime.today()
@@ -24,7 +28,7 @@ filePath = sys.argv[1]
 splitPath = filePath.split("_")
 try:
     meta = EasyID3(filePath)
-except mutagen.id3.ID3NoHeaderError::
+except mutagen.id3.ID:
     meta = mutagen.File(filePath,easy=True)
     meta.add_tags()
 
