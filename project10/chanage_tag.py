@@ -85,12 +85,22 @@ def __change_meta_data(file_path):
     meta['artist'] = "201402329"
     meta['genre'] = __get_date_from_file(file_path)+"_RADIO"
 
+<<<<<<< HEAD
 def execute():
     """
     rtmp와 mpc를 실행하는 부분
     """
     rtmp()
     mpc()
+=======
+filePath = sys.argv[1]
+splitPath = filePath.split("_")
+try:
+    meta = EasyID3(filePath)
+except mutagen.id3.ID:
+    meta = mutagen.File(filePath,easy=True)
+    meta.add_tags()
+>>>>>>> b2ced7dcbfb94b7e8b64d273abebbcb39de18dcc
 
 def main():
     execute()
