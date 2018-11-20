@@ -1,3 +1,6 @@
+"""
+
+"""
 import socket
 import threading
 import os
@@ -6,7 +9,7 @@ import ssl
 import base64
 import sys
 from urllib import parse
-import hue
+
 class Server():
     def __init__(self):
         self.ip_address = 'localhost'
@@ -15,7 +18,6 @@ class Server():
         self.FILE_NO = 'HTTP/1.1 404 Not Found\r\n'
 
     def createSocket(self):
-
             server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             try:
                 server_socket.bind((self.ip_address,self.port_number))
@@ -35,7 +37,6 @@ class Server():
 
 
     def data_send_recv(self,socket,address):
-
         data = socket.recv(5000)
         request_url = self.parsing_request_header(data)
 
@@ -43,7 +44,6 @@ class Server():
             split_url = request_url.split("?")
             if len(split_url)>1:
                 print("split",split_url)
-                self.check_is_hue(split_url)
                 request_url = split_url[0]
             self.make_response_header(request_url,socket)
 
@@ -53,27 +53,6 @@ class Server():
 
         socket.close()
         time.sleep(5)
-
-    def check_is_hue(self,url):
-        print("url",url)
-        if url[0]  == '/hueControl.html':
-            hue_args = url[1].split("&")
-            self.controll_hue(hue_args)
-
-    def controll_hue(self,hue_args):
-        hue_num = hue_args[0][4]
-        print("hue,args",hue_args)
-        power = hue_args[0].split("=")[1]
-        print("power",power)
-        brightness = hue_args[1].split("=")[1]
-        X = hue_args[2].split("=")[1]
-        Y = hue_args[3].split("=")[1]
-        print("!!!!!",hue_num,power,brightness,X,Y)
-        hues = hue.hue()
-        hues.power_controll(hue_num,power)
-        hues.brightness_controll(hue_num,brightness)
-        hues.color_controll(hue_num,X,Y)
-
 
 
 
