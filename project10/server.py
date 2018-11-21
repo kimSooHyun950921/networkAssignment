@@ -1,12 +1,13 @@
 '''
 서버 html파일을 읽는 클래스
 '''
-from bs4 import BeautifulSoup
 import socket
 import threading
 import os
 import time
 import sys
+from bs4 import BeautifulSoup
+
 
 class Server():
     '''

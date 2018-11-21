@@ -3,11 +3,15 @@
 Usage:
    python3 change_tag.py
 """
+import signal
+import os
+import time
 import subprocess
 from datetime import datetime
 import mutagen
 import mutagen.mp3
 from mutagen.easyid3 import EasyID3
+
 STATIC_PATH = "/home/kimsoohyun/Desktop/network/project10/"
 FLV_PATH = STATIC_PATH+"flv_file/"
 MP3_PATH = STATIC_PATH+"mp3_file/"
@@ -38,20 +42,17 @@ def mpc():
     print("CHECK", absolute_path)
     url_KBS = '\"http://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24&ch_type=radioList\"'
     curl_KBS = 'curl -s '+url_KBS+'| grep service_url | tail -1 | cut -d\\" -f 16 | cut -d\\\\ -f 1'
-    try:
-        process = subprocess.Popen(
-            "mplayer $("+curl_KBS+") -ao pcm:file="+FLV_PATH
-            +absolute_path+FILE_FLV+" -vc dummy -vo null",
-            shell=True)
-        process.communicate(timeout=TIME_OUT+20)
-        print(process)
-    except subprocess.CalledProcessError as sub_exception:
-        print("ERROR with mpc:", sub_exception)
-    except subprocess.TimeoutExpired:
-        print("TIME OUT")
-        __force_kill()
-        __flv_to_mp3(absolute_path)
-        __change_meta_data(MP3_PATH+absolute_path+FILE_MP3)
+
+    process = subprocess.Popen(
+        "mplayer $("+curl_KBS+") -ao pcm:file="+FLV_PATH
+        +absolute_path+FILE_FLV+" -vc dummy -vo null",
+        shell=True, preexec_fn=os.setsid)
+    time.sleep(30)
+    os.killpg(os.getpgid(process.pid),signal.SIGTERM)
+    __flv_to_mp3(absolute_path)
+    __change_meta_data(MP3_PATH+absolute_path+FILE_MP3)
+
+
 
 def __flv_to_mp3(file_name):
     subprocess.run(["ffmpeg", "-i", FLV_PATH+file_name+FILE_FLV, "-acodec",
@@ -111,11 +112,9 @@ def __change_meta_data(file_path):
     file_path = '{}{}/{}'.format(STATIC_PATH,
                                  file_path.split("/")[-2],
                                  file_path.split("/")[-1])
-    print("META", file_path)
     try:
         meta = EasyID3(file_path)
     except mutagen.id3.ID3NoHeaderError:
-        print("CHECK", file_path)
         meta = mutagen.File(file_path, easy=True)
         meta.add_tags()
     meta['title'] = __get_current_time("month")+"_kimSooHyun"
@@ -131,7 +130,7 @@ def execute():
     rtmp와 mpc를 실행하는 부분
     """
     mpc()
-    #rtmp()
+    rtmp()
 
 
 
