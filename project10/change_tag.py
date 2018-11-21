@@ -8,14 +8,14 @@ from datetime import datetime
 import mutagen
 import mutagen.mp3
 from mutagen.easyid3 import EasyID3
-
-FLV_PATH = "/home/kimsoohyun/Desktop/network/project10/flv_file/"
-MP3_PATH = "/home/kimsoohyun/Desktop/network/project10/mp3_file/"
+STATIC_PATH = "/home/kimsoohyun/Desktop/network/project10/"
+FLV_PATH = STATIC_PATH+"flv_file/"
+MP3_PATH = STATIC_PATH+"mp3_file/"
 FILE_FLV = ".flv"
 FILE_MP3 = ".mp3"
 FILE_EBS = "_EBS"
 FILE_KBS = "_KBS"
-TIME_OUT = 20
+TIME_OUT = 10
 RTMP_URL = "rtmp://new_iradio.ebs.co.kr/iradio/iradiolive_m4a"
 
 def rtmp():
@@ -43,7 +43,8 @@ def mpc():
             "mplayer $("+curl_KBS+") -ao pcm:file="+FLV_PATH
             +absolute_path+FILE_FLV+" -vc dummy -vo null",
             shell=True)
-        process.communicate(timeout=TIME_OUT)
+        process.communicate(timeout=TIME_OUT+20)
+        print(process)
     except subprocess.CalledProcessError as sub_exception:
         print("ERROR with mpc:", sub_exception)
     except subprocess.TimeoutExpired:
@@ -64,7 +65,8 @@ def __force_kill():
     """
     process_ids = __get_pid()
     for pid in process_ids:
-        subprocess.run("kill -9 "+str(pid), shell=True)
+        result = subprocess.run("kill -9 "+str(pid), shell=True)
+        print("kill result", result)
 
 def __get_pid():
     get_process = subprocess.check_output("ps | grep mplayer", shell=True)
@@ -106,9 +108,10 @@ def __change_meta_data(file_path):
     mp3파일의 메타 데이터를 바꾼다.
     :param: mp3파일 이름
     """
-    file_path = '{}/{}'.format(file_path.split("/")[-2],
-                               file_path.split("/")[-1])
-    print("NO", file_path)
+    file_path = '{}{}/{}'.format(STATIC_PATH,
+                                 file_path.split("/")[-2],
+                                 file_path.split("/")[-1])
+    print("META", file_path)
     try:
         meta = EasyID3(file_path)
     except mutagen.id3.ID3NoHeaderError:
@@ -120,13 +123,16 @@ def __change_meta_data(file_path):
     meta['genre'] = __get_date_from_file(file_path, "genre")+"_RADIO"
     meta['album'] = __get_date_from_file(file_path, "genre")
     meta.save()
+    print("META", str(meta))
+
 
 def execute():
     """
     rtmp와 mpc를 실행하는 부분
     """
-    rtmp()
     mpc()
+    #rtmp()
+
 
 
 def main():

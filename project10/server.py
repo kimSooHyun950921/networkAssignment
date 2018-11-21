@@ -76,27 +76,11 @@ class Server():
 
     def add_mp3_file(self,url):
         mp3_list = Server.get_mp3_file()
-        with open(url, encoding='utf8') as file_name:
-            html = file_name.read()
-            print(html)
-            soup = BeautifulSoup(html, 'html.parser')
-            count = 1
+        html_file = ''
+        with open(url,'r') as file_name:
+            html_file = file_name.read()
 
-            for mp3 in mp3_list:
 
-        #        audio_path = soup.new_tag('audio', controls=True)
-        #        audio_path.append(soup.new_tag('source', src=mp3, type='audio/mpeg'))
-        #        soup.body.insert(count, audio_path)
-
-                href = soup.new_tag('a', href=mp3)
-                href.string = mp3+'_downloads'
-                soup.body.insert(count,href)
-
-                br = soup.new_tag('br')
-                soup.body.a.insert_after(br)
-                count += 1
-            print(soup)
-            return str(soup.prettify())
 
     def check_is_down_mp3(self, url):
         if url == './downloadRadioMP3.html':
