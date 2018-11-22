@@ -53,7 +53,7 @@ class Server():
         time.sleep(5)
 
     @staticmethod
-    def get_mp3_file():
+    def __get_mp3_file():
         path_dir = './mp3_file'
         file_list = os.listdir(path_dir)
         return file_list
@@ -74,28 +74,63 @@ class Server():
         if url[0] == '/':
             return '.'+url
         return './'+url
+    @staticmethod
+    def __html_templates(srces, download_name, file_name):
+        tr_templates = """
+    <tr>
+      <td>
+        <audio controls>
+          <source src='"""+srces+"""' type='audio/mpeg'>
+        </audio>
+      </td>
+      <td>
+        <a href='"""+srces+"""' download='"""+download_name+"""'>
+          """+file_name+"""</a>
+      </td>
+    </tr>
+    """
+        return tr_templates
 
-    def add_mp3_file(self,url):
-        mp3_list = Server.get_mp3_file()
-        html_file = ''
-        with open(url,'r') as file_name:
-            html_file = file_name.read()
+    @staticmethod
+    def __find_template_loc(html_list):
+        i = 0
+        print(html_list)
+        for element in html_list:
+            print(element)
+            print(element.find("</tr>"))
+            if element.find("</tr>") > 0:
+                print("I", i)
+                return i
+            i += 1
+        return -1
 
+    def add_mp3_to_html(self,url):
 
+        mp3_list = Server.__get_mp3_file()
+        html_list = Server.__read_files()
+        loc = Server.__find_template_loc(html_list)
+        print(loc)
 
-    def check_is_down_mp3(self, url):
-        if url == './downloadRadioMP3.html':
-            html = self.add_mp3_file(url)
-            print(html)
-            with open('downloadRadioMP3.html', 'w') as fp:
-                fp.write(html)
+        for mp3 in mp3_list:
+            src = "./mp3_file/"+mp3
+            print("INFO", src, mp3, mp3)
+            html_list.insert(loc+1, Server.__html_templates(src, mp3, mp3))
+            loc  += 1
 
-    def make_response_header(self, url, client_socket):
-        url = Server.__make_relative_path(url)
+        with open(url[2:], 'w') as html:
+            html.writelines(html_list)
+
+    @staticmethod
+    def __read_files():
+        with open('html_template.txt', 'r') as html:
+            return html.readlines()
+
+    def send_http(self, url, client_socket):
         if os.path.isfile(url):
             print('there is file', url)
             is_first = True
-            self.check_is_down_mp3(url)
+            self.add_mp3_to_html(url)
+
             with open('downloadRadioMP3.html', 'rb') as file_name:
                 print("DONE", file_name)
                 while True:
@@ -117,7 +152,19 @@ class Server():
             client_socket.send(self.FILE_NO.encode())
 
 
+    def make_response_header(self, url, client_socket):
+        url = Server.__make_relative_path(url)
+        file_extension = url.split(".")[2]
+        if file_extension == "html":
 
+            self.send_http(url, client_socket)
+        elif file_extension == "mp3":
+            print(url)
+            print(file_extension)
+            with open(url,'rb') as mp3_file:
+                byte_file = self.FILE_OK+'\n'
+                byte_file = byte_file.encode()+mp3_file.read()
+                client_socket.send(byte_file)
     def main(self):
         self.createSocket()
 
