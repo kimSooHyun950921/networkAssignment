@@ -6,7 +6,6 @@ import threading
 import os
 import time
 import sys
-from bs4 import BeautifulSoup
 
 
 class Server():
@@ -126,45 +125,47 @@ class Server():
             return html.readlines()
 
     def send_http(self, url, client_socket):
+        print('there is file', url)
+        is_first = True
+        self.add_mp3_to_html(url)
+
+        with open('downloadRadioMP3.html', 'rb') as file_name:
+            print("DONE", file_name)
+            while True:
+                file_data = file_name.read(1024)
+                if len(file_data) == 0:
+                    break
+                if is_first:
+                    request_msg = self.FILE_OK+'\n'
+                    request_msg = request_msg.encode()+file_data
+                    is_first = False
+                    client_socket.send(request_msg)
+                else:
+                    request_msg = file_data
+                    client_socket.send(request_msg)
+
+    def send_mp3(self, url, client_socket):
+        with open(url, 'rb') as mp3_file:
+            byte_file = self.FILE_OK+'\n'
+            byte_file = byte_file.encode()+mp3_file.read()
+            client_socket.send(byte_file)
+
+
+    def make_response_header(self, url, client_socket):
+        url = Server.__make_relative_path(url)
+        file_extension = url.split(".")[2]
         if os.path.isfile(url):
-            print('there is file', url)
-            is_first = True
-            self.add_mp3_to_html(url)
+            if file_extension == "html":
+                self.send_http(url, client_socket)
 
-            with open('downloadRadioMP3.html', 'rb') as file_name:
-                print("DONE", file_name)
-                while True:
-                    file_data = file_name.read(1024)
-                    if len(file_data) == 0:
-                        break
-                    if is_first:
-                        request_msg = self.FILE_OK+'\n'
-                        request_msg = request_msg.encode()+file_data
-                        is_first = False
-                        client_socket.send(request_msg)
-                    else:
-                        request_msg = file_data
-                        client_socket.send(request_msg)
-
+            elif file_extension == "mp3":
+                self.send_mp3(url, client_socket)
 
         else:
             print('there isn\'t file - ', url)
             client_socket.send(self.FILE_NO.encode())
 
 
-    def make_response_header(self, url, client_socket):
-        url = Server.__make_relative_path(url)
-        file_extension = url.split(".")[2]
-        if file_extension == "html":
-
-            self.send_http(url, client_socket)
-        elif file_extension == "mp3":
-            print(url)
-            print(file_extension)
-            with open(url,'rb') as mp3_file:
-                byte_file = self.FILE_OK+'\n'
-                byte_file = byte_file.encode()+mp3_file.read()
-                client_socket.send(byte_file)
     def main(self):
         self.createSocket()
 
