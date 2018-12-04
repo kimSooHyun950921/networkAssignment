@@ -19,7 +19,7 @@ FILE_FLV = ".flv"
 FILE_MP3 = ".mp3"
 FILE_EBS = "_EBS"
 FILE_KBS = "_KBS"
-TIME_OUT = 10
+TIME_OUT = 30
 RTMP_URL = "rtmp://new_iradio.ebs.co.kr/iradio/iradiolive_m4a"
 
 def rtmp():

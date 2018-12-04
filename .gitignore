@@ -21,5 +21,11 @@ dataCommunication/
 */*.flv
 */*.swp
 __pycache__/
+*/**/oix-full-snapshot-2018-11-01-2200
+*/**/oix-full-snapshot-2018-11-01-2200.bz
+*/**/*.txt
+project13/oix-full-snapshot-2018-11-01-2200
+project13/oix-full-snapshot-2018-11-01-2200.bz2
+project13/sample.txt
 
 
