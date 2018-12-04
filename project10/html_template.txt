@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+  <h1 style="text-align:center;">
+    mp3
+  </h1>
+  <table style="margin-left: auto; margin-right: auto;">
+    <tr>
+      <th> music</th>
+      <th> download</th>
+    </tr>
+    <tr>
+      <td>
+        <audio controls>
+          <source src='./mp3_file/20181122020032_EBS.mp3' type='audio/mpeg'>
+        </audio>
+      </td>
+      <td>
+        <a href='./mp3_file/20181122020032_EBS.mp3' download="EBS.mp3">
+          20181122020032_EBS.mp3</a>
+      </td>
+    </tr>
+    <td>
+      <audio controls>
+        <source src='./mp3_file/20181122020032_EBS.mp3' type='audio/mpeg'>
+      </audio>
+    </td>
+    <td>
+      <a href='./mp3_file/20181122020032_EBS.mp3' download="EBS.mp3">
+        20181122020032_EBS.mp3 </a>
+    </td>
+    </tr>
+
+  </table>
+
+
+  <br>
+</body>
+
+</html>
