@@ -27,5 +27,6 @@ __pycache__/
 project13/oix-full-snapshot-2018-11-01-2200
 project13/oix-full-snapshot-2018-11-01-2200.bz2
 project13/sample.txt
+*/**/*.pickle
 
 
