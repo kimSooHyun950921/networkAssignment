@@ -9,6 +9,7 @@ dataCommunication/
 */**/.flv
 */**/*.swp
 */**/*.pickle
+*/**/*.ipynb
 *.pdf
 *.zip
 *.docx
@@ -30,5 +31,6 @@ project13/oix-full-snapshot-2018-11-01-2200.bz2
 project13/sample.txt
 project13/*.pickle
 */**/*.pickle
+
 
 
